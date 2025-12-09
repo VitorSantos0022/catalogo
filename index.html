@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Catálogo Digital</title>
+  <meta name="description" content="JU Multimarcas" />
+  <style>
+    :root{
+      --bg:#0f1724; /* dark navy */
+      --card:#0b1220;
+      --muted:#94a3b8;
+      --accent:#06b6d4; /* cyan */
+      --glass: rgba(255,255,255,0.03);
+      --radius:14px;
+      --gap:18px;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      background: linear-gradient(180deg,var(--bg) 0%, #071025 100%);
+      color: #e6eef8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:28px;
+    }
+    .app{
+      max-width:1100px;
+      margin:0 auto;
+    }
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:22px;
+    }
+    .brand{
+      display:flex;align-items:center;gap:12px;
+    }
+    .logo{
+      width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#7c3aed);display:flex;align-items:center;justify-content:center;font-weight:700;color:#042a2e;font-size:18px;
+    }
+    h1{margin:0;font-size:20px}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+
+    .controls{
+      display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+    }
+    .search{
+      background:var(--glass);border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:10px;display:flex;align-items:center;gap:8px;min-width:220px;
+    }
+    .search input{background:transparent;border:0;color:inherit;outline:none;width:190px}
+    .select, .btn{
+      background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px;color:inherit;cursor:pointer
+    }
+
+    main{
+      display:grid;grid-template-columns: 1fr 320px;gap:20px;align-items:start;
+    }
+    .catalog{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      padding:18px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.03);
+    }
+    .grid{
+      display:grid;grid-template-columns: repeat(auto-fill,minmax(220px,1fr));gap:var(--gap);
+      margin-top:12px;
+    }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:8px;
+    }
+    .card img{width:100%;height:140px;object-fit:cover;border-radius:10px}
+    .card h3{margin:0;font-size:15px}
+    .price{font-weight:700}
+    .meta{color:var(--muted);font-size:13px}
+    .card .actions{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+    .view{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:6px 10px;border-radius:8px;cursor:pointer}
+
+    aside{
+      position:relative;
+    }
+    .panel{
+      position:sticky;top:28px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:16px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.03);
+    }
+    .panel h4{margin-top:0}
+    .filter-list{display:flex;flex-direction:column;gap:8px}
+    .chip{padding:8px 10px;border-radius:999px;border:1px solid rgba(255,255,255,0.04);cursor:pointer}
+
+    footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
+
+    /* modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:none;align-items:center;justify-content:center;padding:24px;z-index:80}
+    .modal{background:linear-gradient(180deg,#071125,#081428);padding:18px;border-radius:12px;max-width:820px;width:100%;border:1px solid rgba(255,255,255,0.04);display:grid;grid-template-columns:320px 1fr;gap:14px}
+    .modal img{width:100%;height:320px;object-fit:cover;border-radius:10px}
+    .modal h2{margin:0}
+    .close{background:transparent;border:0;color:var(--muted);cursor:pointer}
+
+    /* responsive */
+    @media (max-width:900px){
+      main{grid-template-columns:1fr}
+      aside{order:2}
+      .modal{grid-template-columns:1fr}
+      .modal img{height:260px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="logo">JU</div>
+        <div>
+          <h1>Catálogo Digital</h1>
+          <p class="lead">JU Multimarcas</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="search" role="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="1.6"></circle></svg>
+          <input id="q" placeholder="Pesquisar produtos (nome ou categoria)..." />
+        </div>
+        <select id="sort" class="select" aria-label="Ordenar">
+          <option value="default">Ordenar: Relevância</option>
+          <option value="price-asc">Preço: menor → maior</option>
+          <option value="price-desc">Preço: maior → menor</option>
+        </select>
+        <button id="reset" class="btn">Limpar filtros</button>
+      </div>
+    </header>
+    <main>
+      <section class="catalog">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <strong id="resultsCount">0 itens</strong>
+            <div class="meta">Exibindo catálogo</div>
+          </div>
+          <div class="meta">Ex: clique em <span style="font-weight:600">Ver</span> para detalhes</div>
+        </div>
+
+        <div class="grid" id="grid"></div>
+      </section>
+
+      <aside>
+        <div class="panel">
+          <h4>Filtros</h4>
+          <div class="filter-list" id="categories"></div>
+          <hr style="border:none;border-top:1px solid rgba(255,255,255,0.03);margin:12px 0">
+          <h4>Contato</h4>
+          <p class="meta">Entre em contato conosco através do WhatsApp ou Instagram</p>
+          <ol class="meta" style="padding-left:16px">
+            <li>Instagram</li>
+            <li>jumultimarcas</li>
+            <li>WhatsApp</li>
+            <li>(91) 98570-0103</li>
+          </ol>
+          <p class="meta">Aguardamos você!</p>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- modal -->
+  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" id="productModal">
+      <img id="modalImg" src="" alt="" />
+      <div>
+        <button class="close" id="closeModal">Fechar ✕</button>
+        <h2 id="modalTitle">Título</h2>
+        <p class="meta" id="modalCategory">Categoria</p>
+        <p id="modalDesc" style="margin-top:12px;color:var(--muted)"></p>
+        <p style="margin-top:14px;font-size:18px" class="price" id="modalPrice">R$90,00</p>
+        <div style="margin-top:16px;display:flex;gap:8px">
+          <a id="buyLink" class="view" target="_blank" rel="noopener">Comprar</a>
+          <button id="close2" class="view">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========= Dados de exemplo: personalize conforme necessário =========
+    const products = [
+      { id:1, name: 'Sandália Casual', category:'Calçados', price:90.00, img:'Imagens/img02.jpeg', desc:'Sandália confortável para uso diário.' },
+      { id:2, name: 'Sandália Casual', category:'Calçados', price:90.00, img:'Imagens/Img03.jpeg', desc:'Sandália confortável para uso diário.' },
+      { id:3, name: 'Sandália Casual', category:'Calçados', price:90.00, img:'Imagens/img04.jpeg', desc:'MSandália confortável para uso diário.".' },
+      { id:4, name: 'Sandália Casual', category:'Calçados', price:90.00, img:'Imagens/img05.jpeg', desc:'Sandália confortável para uso diário.' },
+      { id:5, name: 'Sandália Casual', category:'Calçados', price:90.00, img:'Imagens/img07.jpeg', desc:'Sandália confortável para uso diário.' },
+      { id:6, name: 'Sandália Casual', category:'Calçados', price:90.00, img:'Imagens/img08.jpeg', desc:'Sandália confortável para uso diário.' }
+    ];
+
+    // ========= Elementos =========
+    const grid = document.getElementById('grid');
+    const q = document.getElementById('q');
+    const sort = document.getElementById('sort');
+    const reset = document.getElementById('reset');
+    const categoriesEl = document.getElementById('categories');
+    const resultsCount = document.getElementById('resultsCount');
+
+    // modal
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const modalImg = document.getElementById('modalImg');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalCategory = document.getElementById('modalCategory');
+    const modalDesc = document.getElementById('modalDesc');
+    const modalPrice = document.getElementById('modalPrice');
+    const buyLink = document.getElementById('buyLink');
+    const closeModal = document.getElementById('closeModal');
+    const close2 = document.getElementById('close2');
+
+    // ========= Renderização =========
+    function renderGrid(list){
+      grid.innerHTML = '';
+      if(!list.length){
+        grid.innerHTML = '<div style="grid-column:1/-1;color:var(--muted);padding:20px;text-align:center">Nenhum produto encontrado.</div>';
+        resultsCount.textContent = '0 itens';
+        return;
+      }
+      resultsCount.textContent = list.length + (list.length === 1 ? ' item' : ' itens');
+      list.forEach(p => {
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.innerHTML = `
+          <img src="${p.img}" alt="${p.name}" loading="lazy">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>${p.name}</h3>
+            <div class="price">R$ ${p.price.toFixed(2).replace('.',',')}</div>
+          </div>
+          <div class="meta">${p.category}</div>
+          <div class="actions">
+            <button class="view" data-id="${p.id}">Ver</button>
+            <div class="meta">ID: ${p.id}</div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      // attach view handlers
+      document.querySelectorAll('.view[data-id]').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const id = Number(btn.dataset.id);
+          const product = products.find(x => x.id === id);
+          openModal(product);
+        });
+      });
+    }
+
+    function renderCategories(){
+      const cats = Array.from(new Set(products.map(p=>p.category)));
+      categoriesEl.innerHTML = '';
+      const all = document.createElement('button');
+      all.className = 'chip';
+      all.textContent = 'Todos';
+      all.addEventListener('click', ()=>{ applyFilters(); });
+      categoriesEl.appendChild(all);
+      cats.forEach(c => {
+        const b = document.createElement('button');
+        b.className = 'chip';
+        b.textContent = c;
+        b.addEventListener('click', ()=>{ applyFilters({category:c}); });
+        categoriesEl.appendChild(b);
+      });
+    }
+
+    // ========= Filtros e busca =========
+    function applyFilters(opts = {}){
+      const query = (opts.q ?? q.value).trim().toLowerCase();
+      const category = opts.category ?? null;
+      let res = products.slice();
+      if(category){ res = res.filter(p => p.category === category); }
+      if(query){ res = res.filter(p => p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query)); }
+
+      // sorting
+      const s = opts.sort ?? sort.value;
+      if(s === 'price-asc') res.sort((a,b)=>a.price-b.price);
+      else if(s === 'price-desc') res.sort((a,b)=>b.price-a.price);
+
+      renderGrid(res);
+    }
+
+    // ========= Modal =========
+    function openModal(product){
+      if(!product) return;
+      modalImg.src = product.img;
+      modalTitle.textContent = product.name;
+      modalCategory.textContent = product.category;
+      modalDesc.textContent = product.desc;
+      modalPrice.textContent = 'R$ ' + product.price.toFixed(2).replace('.',',');
+      // example: link to buy (could be editado)
+      buyLink.href = 'https://wa.me/559185700103?text=Olá,%20quero%20mais%20informações!' + encodeURIComponent('Tenho interesse no produto: ' + product.name + ' (ID ' + product.id + ')');
+      modalBackdrop.style.display = 'flex';
+      modalBackdrop.setAttribute('aria-hidden','false');
+    }
+    function closeModalFn(){
+      modalBackdrop.style.display = 'none';
+      modalBackdrop.setAttribute('aria-hidden','true');
+    }
+
+    // ========= eventos =========
+    q.addEventListener('input', ()=> applyFilters({q:q.value, sort:sort.value}));
+    sort.addEventListener('change', ()=> applyFilters({q:q.value, sort:sort.value}));
+    reset.addEventListener('click', ()=>{ q.value=''; sort.value='default'; applyFilters(); });
+    closeModal.addEventListener('click', closeModalFn);
+    close2.addEventListener('click', closeModalFn);
+    modalBackdrop.addEventListener('click', (e)=>{ if(e.target === modalBackdrop) closeModalFn(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeModalFn(); });
+
+    // inicialização
+    renderCategories();
+    applyFilters();
+  </script>
+</body>
+</html>
